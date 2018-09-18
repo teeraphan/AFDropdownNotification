@@ -91,10 +91,21 @@
         [_topButton setTitle:_topButtonText forState:UIControlStateNormal];
         [_bottomButton setTitle:_bottomButtonText forState:UIControlStateNormal];
         
+        CGFloat safeAreaInsetsTop = 0.0;
+        
+        if (@available(iOS 11.0, *)) {
+            UIWindow *window = UIApplication.sharedApplication.keyWindow;
+            safeAreaInsetsTop = window.safeAreaInsets.top;
+        }
+        
+        if (safeAreaInsetsTop == 0.0) {
+            safeAreaInsetsTop = 20.0;
+        }
+        
         NSInteger textWidth = ([[UIScreen mainScreen] bounds].size.width - kDropdownPadding - kDropdownImageSize - kDropdownPadding - kDropdownPadding - kDropdownButtonWidth - kDropdownPadding);
         NSInteger titleHeight = [_titleLabel.text boundingRectWithSize:CGSizeMake(textWidth, 999) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue-Medium" size:kDropdownTitleFontSize]} context:nil].size.height;
         NSInteger subtitleHeight = [_subtitleLabel.text boundingRectWithSize:CGSizeMake(textWidth, 999) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue" size:kDropdownSubtitleFontSize]} context:nil].size.height;
-        NSInteger notificationHeight = (20 + kDropdownPadding + titleHeight + (kDropdownPadding / 2) + subtitleHeight + kDropdownPadding);
+        NSInteger notificationHeight = (safeAreaInsetsTop + kDropdownPadding + titleHeight + (kDropdownPadding / 2) + subtitleHeight + kDropdownPadding);
         
         if (notificationHeight < 100) {
             
@@ -116,7 +127,7 @@
             _notificationView.backgroundColor = [UIColor whiteColor];
         }
         
-        _imageView.frame = CGRectMake(kDropdownPadding, (notificationHeight / 2) - (kDropdownImageSize / 2) + (20 / 2), kDropdownImageSize, kDropdownImageSize);
+        _imageView.frame = CGRectMake(kDropdownPadding, (notificationHeight / 2) - (kDropdownImageSize / 2) + (safeAreaInsetsTop / 2), kDropdownImageSize, kDropdownImageSize);
         
         if (_image) {
             [_notificationView addSubview:_imageView];
@@ -128,7 +139,7 @@
             }
         }
         
-        _titleLabel.frame = CGRectMake(kDropdownPadding + kDropdownImageSize + kDropdownPadding, 20 + kDropdownPadding, textWidth, titleHeight);
+        _titleLabel.frame = CGRectMake(kDropdownPadding + kDropdownImageSize + kDropdownPadding, safeAreaInsetsTop + kDropdownPadding, textWidth, titleHeight);
         
         if (_titleText) {
             [_notificationView addSubview:_titleLabel];
@@ -140,7 +151,7 @@
             [_notificationView addSubview:_subtitleLabel];
         }
         
-        _topButton.frame = CGRectMake(_titleLabel.frame.origin.x + _titleLabel.frame.size.width + kDropdownPadding, 20 + (kDropdownPadding / 2), kDropdownButtonWidth, kDropdownButtonHeight);
+        _topButton.frame = CGRectMake(_titleLabel.frame.origin.x + _titleLabel.frame.size.width + kDropdownPadding, safeAreaInsetsTop + (kDropdownPadding / 2), kDropdownButtonWidth, kDropdownButtonHeight);
         [_topButton addTarget:self action:@selector(topButtonTapped) forControlEvents:UIControlEventTouchUpInside];
         
         if (_topButtonText) {
